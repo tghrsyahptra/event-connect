@@ -99,7 +99,7 @@ class ProfileController extends Controller
     public function updateOrganizerStatus(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'is_organizer' => 'required|boolean',
+            'role' => 'required|in:admin,participant',
         ]);
 
         if ($validator->fails()) {
@@ -111,11 +111,14 @@ class ProfileController extends Controller
         }
 
         $user = $request->user();
-        $user->update(['is_organizer' => $request->is_organizer]);
+        $user->update([
+            'role' => $request->role,
+            'is_organizer' => $request->role === 'admin' // Admin = Event Organizer
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Organizer status updated successfully',
+            'message' => 'Role updated successfully. Admin = Event Organizer',
             'data' => $user->fresh()
         ]);
     }

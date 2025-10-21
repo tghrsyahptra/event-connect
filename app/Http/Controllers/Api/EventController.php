@@ -76,10 +76,10 @@ class EventController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->is_organizer) {
+        if (!$user->canCreateEvents()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only organizers can create events'
+                'message' => 'Only organizers (admins) can create events'
             ], 403);
         }
 

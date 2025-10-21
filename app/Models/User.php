@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'full_name',
         'email',
+        'role',
         'phone',
         'bio',
         'avatar',
@@ -51,6 +52,33 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_organizer' => 'boolean',
         ];
+    }
+
+    // Role checking methods
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isParticipant()
+    {
+        return $this->role === 'participant';
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    // Organizer checking methods (Admin = Event Organizer)
+    public function isOrganizer()
+    {
+        return $this->is_organizer || $this->isAdmin();
+    }
+
+    public function canCreateEvents()
+    {
+        return $this->isOrganizer();
     }
 
     // Relationships

@@ -1,5 +1,18 @@
 # Event Connect API Documentation
 
+## User Roles & Permissions
+
+### Role System
+- **Admin** = Event Organizer (pihak yang menyelenggarakan acara)
+  - Can create, edit, and manage events
+  - Can access admin dashboard
+  - `role = 'admin'` AND `is_organizer = true`
+  
+- **Participant** = Regular User (peserta acara)
+  - Can register for events
+  - Can view events and participate
+  - `role = 'participant'` AND `is_organizer = false`
+
 ## Base URL
 ```
 http://127.0.0.1:8003/api
@@ -78,7 +91,7 @@ Login with email and password.
             "phone": null,
             "bio": null,
             "avatar": null,
-            "is_organizer": false,
+            "is_organizer": false, // Admin = Event Organizer (is_organizer = true)
             "email_verified_at": null,
             "created_at": "2025-10-14T09:22:29.000000Z",
             "updated_at": "2025-10-14T09:22:29.000000Z"
