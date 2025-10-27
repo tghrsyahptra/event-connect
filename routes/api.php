@@ -94,4 +94,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('{category}', [CategoryController::class, 'update']);
         Route::delete('{category}', [CategoryController::class, 'destroy']);
     });
+
+    
 });
