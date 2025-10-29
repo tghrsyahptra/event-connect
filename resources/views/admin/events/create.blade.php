@@ -68,8 +68,22 @@
                     <label for="location" class="block text-sm font-medium text-gray-700">Location *</label>
                     <input type="text" name="location" id="location" value="{{ old('location') }}" 
                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('location') border-red-500 @enderror" 
-                           required>
+                           placeholder="e.g., Jakarta Convention Center, Online via Zoom" required>
                     @error('location')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Event Type -->
+                <div>
+                    <label for="event_type" class="block text-sm font-medium text-gray-700">Event Type</label>
+                    <select name="event_type" id="event_type" 
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('event_type') border-red-500 @enderror">
+                        <option value="offline" {{ old('event_type') == 'offline' ? 'selected' : '' }}>Offline (Physical Event)</option>
+                        <option value="online" {{ old('event_type') == 'online' ? 'selected' : '' }}>Online (Virtual Event)</option>
+                        <option value="hybrid" {{ old('event_type') == 'hybrid' ? 'selected' : '' }}>Hybrid (Both Online & Offline)</option>
+                    </select>
+                    @error('event_type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -101,11 +115,11 @@
             <div class="space-y-6">
                 <!-- Max Participants -->
                 <div>
-                    <label for="max_participants" class="block text-sm font-medium text-gray-700">Max Participants</label>
-                    <input type="number" name="max_participants" id="max_participants" value="{{ old('max_participants') }}" 
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('max_participants') border-red-500 @enderror" 
-                           min="1">
-                    @error('max_participants')
+                    <label for="quota" class="block text-sm font-medium text-gray-700">Max Participants (Quota) *</label>
+                    <input type="number" name="quota" id="quota" value="{{ old('quota') }}" 
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('quota') border-red-500 @enderror" 
+                           min="1" required>
+                    @error('quota')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -150,6 +164,28 @@
                 <div id="image-preview" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Preview</label>
                     <img id="preview-img" class="w-full h-48 object-cover rounded-lg border" alt="Preview">
+                </div>
+
+                <!-- Contact Information -->
+                <div>
+                    <label for="contact_info" class="block text-sm font-medium text-gray-700">Contact Information</label>
+                    <textarea name="contact_info" id="contact_info" rows="3" 
+                              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('contact_info') border-red-500 @enderror" 
+                              placeholder="Phone: +62xxx, Email: contact@example.com, WhatsApp: +62xxx">{{ old('contact_info') }}</textarea>
+                    @error('contact_info')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Requirements -->
+                <div>
+                    <label for="requirements" class="block text-sm font-medium text-gray-700">Requirements</label>
+                    <textarea name="requirements" id="requirements" rows="3" 
+                              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('requirements') border-red-500 @enderror" 
+                              placeholder="e.g., Bring laptop, Valid ID, Dress code: Business casual">{{ old('requirements') }}</textarea>
+                    @error('requirements')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
         </div>

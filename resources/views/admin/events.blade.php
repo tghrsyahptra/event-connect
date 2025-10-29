@@ -39,9 +39,14 @@
         <div class="flex-1 overflow-y-auto">
             <!-- Header -->
             <header class="bg-white shadow-sm border-b">
-                <div class="px-6 py-4">
-                    <h2 class="text-3xl font-bold text-gray-800">Events Management</h2>
-                    <p class="text-gray-600">Manage all events and their details.</p>
+                <div class="px-6 py-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">Events Management</h2>
+                        <p class="text-gray-600">Manage all events and their details.</p>
+                    </div>
+                    <a href="{{ route('admin.events.create') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center text-lg">
+                        <i class="fas fa-plus mr-2"></i>Create New Event
+                    </a>
                 </div>
             </header>
 
@@ -89,7 +94,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             @if($event->image)
-                                                <img class="h-12 w-12 rounded-lg object-cover" src="{{ $event->image }}" alt="">
+                                                <img class="h-12 w-12 rounded-lg object-cover" src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}">
                                             @else
                                                 <div class="h-12 w-12 rounded-lg bg-gray-300 flex items-center justify-center">
                                                     <i class="fas fa-calendar text-gray-600"></i>
@@ -103,8 +108,8 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $event->user->full_name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $event->user->email }}</div>
+                                        <div class="text-sm text-gray-900">{{ $event->organizer->name ?? $event->organizer->full_name ?? 'Unknown' }}</div>
+                                        <div class="text-sm text-gray-500">{{ $event->organizer->email ?? 'No email' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
@@ -117,10 +122,10 @@
                                         <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($event->start_date)->format('H:i') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('H:i') }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $event->participants_count }}/{{ $event->quota ?? '∞' }}</div>
+                                        <div class="text-sm text-gray-900">{{ $event->registered_count }}/{{ $event->quota ?? '∞' }}</div>
                                         @if($event->quota)
                                             <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
-                                                <div class="bg-blue-600 h-2 rounded-full" style="width: {{ min(100, ($event->participants_count / $event->quota) * 100) }}%"></div>
+                                                <div class="bg-blue-600 h-2 rounded-full" style="width: {{ min(100, ($event->registered_count / $event->quota) * 100) }}%"></div>
                                             </div>
                                         @endif
                                     </td>
@@ -161,18 +166,27 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
-                                            <button class="text-blue-600 hover:text-blue-900" title="View Details">
+                                            <a href="{{ route('admin.events.show', $event) }}" class="text-blue-600 hover:text-blue-900" title="View Details">
                                                 <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="text-green-600 hover:text-green-900" title="Edit Event">
+                                            </a>
+                                            <a href="{{ route('admin.events.edit', $event) }}" class="text-green-600 hover:text-green-900" title="Edit Event">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="text-purple-600 hover:text-purple-900" title="View Participants">
+                                            </a>
+                                            <a href="{{ route('admin.events.participants', $event) }}" class="text-purple-600 hover:text-purple-900" title="View Participants">
                                                 <i class="fas fa-users"></i>
-                                            </button>
-                                            <button class="text-red-600 hover:text-red-900" title="Delete Event">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            </a>
+                                            @if($event->qr_code)
+                                            <a href="{{ route('attendance.qr-code', $event) }}" class="text-indigo-600 hover:text-indigo-900" title="View QR Code">
+                                                <i class="fas fa-qrcode"></i>
+                                            </a>
+                                            @endif
+                                            <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this event?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900" title="Delete Event">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

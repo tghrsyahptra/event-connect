@@ -17,6 +17,8 @@ class EventParticipant extends Model
         'amount_paid',
         'payment_reference',
         'attended_at',
+        'qr_code',
+        'qr_code_string',
     ];
 
     protected function casts(): array

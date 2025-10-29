@@ -13,23 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info('🚀 Starting database seeding...');
+        
         $this->call([
-            CategorySeeder::class,
+            DummyDataSeeder::class,
         ]);
 
-        // Create test users
-        User::factory()->create([
-            'name' => 'Test User',
-            'full_name' => 'Test User',
-            'email' => 'test@example.com',
-            'is_organizer' => false,
-        ]);
-
-        User::factory()->create([
-            'name' => 'Event Organizer',
-            'full_name' => 'Event Organizer',
-            'email' => 'organizer@example.com',
-            'is_organizer' => true,
-        ]);
+        $this->command->info('✅ Database seeding completed!');
     }
 }

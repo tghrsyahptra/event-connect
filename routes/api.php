@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\EventParticipantController;
 use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\SuperAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +33,14 @@ Route::prefix('auth')->group(function () {
 
 // Public event routes
 Route::get('events', [EventController::class, 'index']);
+Route::get('events/search', [EventController::class, 'search']);
+Route::get('events/filter-options', [EventController::class, 'getFilterOptions']);
+Route::get('events/popular-searches', [EventController::class, 'getPopularSearches']);
 Route::get('events/{event}', [EventController::class, 'show']);
 Route::get('categories', [CategoryController::class, 'index']);
+
+// Public payment routes
+Route::post('payments/webhook', [PaymentController::class, 'handleWebhook']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -66,8 +74,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('cancel/{event}', [EventParticipantController::class, 'cancelParticipation']);
         Route::post('attendance', [EventParticipantController::class, 'markAttendance']);
         Route::get('my-participations', [EventParticipantController::class, 'myParticipations']);
-        Route::post('payment/{event}', [EventParticipantController::class, 'processPayment']);
         Route::get('event/{event}', [EventParticipantController::class, 'getEventParticipants']);
+    });
+
+    // Payment routes
+    Route::prefix('payments')->group(function () {
+        Route::post('create', [PaymentController::class, 'createPayment']);
+        Route::get('status/{participant}', [PaymentController::class, 'getPaymentStatus']);
+        Route::post('cancel/{participant}', [PaymentController::class, 'cancelPayment']);
+        Route::post('retry/{participant}', [PaymentController::class, 'retryPayment']);
+        Route::get('methods', [PaymentController::class, 'getPaymentMethods']);
+        Route::get('history', [PaymentController::class, 'getPaymentHistory']);
+        Route::get('statistics', [PaymentController::class, 'getPaymentStatistics']);
     });
 
     // Feedback routes
@@ -95,5 +113,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{category}', [CategoryController::class, 'destroy']);
     });
 
+    // Super Admin routes
+    Route::prefix('super-admin')->middleware('role:super_admin')->group(function () {
+        Route::get('organizers', [SuperAdminController::class, 'getOrganizers']);
+        Route::get('organizers/{id}', [SuperAdminController::class, 'getOrganizerDetails']);
+        Route::post('organizers/{id}/toggle-status', [SuperAdminController::class, 'toggleOrganizerStatus']);
+        Route::get('events', [SuperAdminController::class, 'getAllEvents']);
+        Route::get('statistics', [SuperAdminController::class, 'getStatistics']);
+    });
     
 });

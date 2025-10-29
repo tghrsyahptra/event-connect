@@ -65,6 +65,11 @@ class User extends Authenticatable
         return $this->role === 'participant';
     }
 
+    public function isSuperAdmin()
+    {
+        return $this->role === 'super_admin';
+    }
+
     public function hasRole($role)
     {
         return $this->role === $role;
@@ -73,7 +78,7 @@ class User extends Authenticatable
     // Organizer checking methods (Admin = Event Organizer)
     public function isOrganizer()
     {
-        return $this->is_organizer || $this->isAdmin();
+        return $this->is_organizer || $this->isAdmin() || $this->isSuperAdmin();
     }
 
     public function canCreateEvents()

@@ -44,7 +44,7 @@
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">Base URL</h2>
             <div class="code-block">
-                <code class="text-green-400">http://127.0.0.1:8003/api</code>
+                <code class="text-green-400">http://localhost:8000/api</code>
             </div>
         </div>
 
@@ -607,6 +607,591 @@
             </div>
         </div>
 
+        <!-- Payment History API -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Payment History API</h2>
+            
+            <!-- Get Payment History -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/payments/history</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get payment history for authenticated user</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "status": "paid|pending|failed|cancelled",     // Optional
+    "payment_method": "invoice|virtual_account|ewallet", // Optional
+    "date_from": "2025-01-01",                    // Optional
+    "date_to": "2025-12-31",                      // Optional
+    "per_page": 10                                // Optional, default: 10
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "payments": [
+            {
+                "id": 93,
+                "event": {
+                    "id": 9,
+                    "title": "Digital Art Exhibition",
+                    "start_date": "2025-11-24T16:25:39.000000Z",
+                    "location": "Jakarta Art Gallery",
+                    "price": "50000.00",
+                    "organizer": {
+                        "id": 3,
+                        "name": "Sarah Johnson",
+                        "email": "sarah@workshop.com"
+                    },
+                    "category": {
+                        "id": 5,
+                        "name": "Arts & Culture",
+                        "color": "#8B5CF6"
+                    }
+                },
+                "payment": {
+                    "reference": "69024d448a9cf659daae6855",
+                    "method": "invoice",
+                    "status": "paid",
+                    "amount": 50000,
+                    "is_paid": true,
+                    "paid_at": "2025-10-29T17:25:00.000000Z"
+                },
+                "participation": {
+                    "status": "registered",
+                    "attended_at": null,
+                    "qr_code": "qr_codes/participants/user_24_event_9_1761757593_69024999af04a.svg",
+                    "qr_code_url": "http://localhost:8000/storage/qr_codes/participants/user_24_event_9_1761757593_69024999af04a.svg"
+                }
+            }
+        ],
+        "pagination": {
+            "current_page": 1,
+            "last_page": 1,
+            "per_page": 10,
+            "total": 2,
+            "from": 1,
+            "to": 2,
+            "has_more_pages": false
+        },
+        "summary": {
+            "total_payments": 2,
+            "total_paid": 100000,
+            "total_pending": 0,
+            "total_failed": 0
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Payment Statistics -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/payments/statistics</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get payment statistics for authenticated user</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "date_from": "2024-01-01",    // Optional, default: 12 months ago
+    "date_to": "2025-12-31"       // Optional, default: now
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "period": {
+            "from": "2024-01-01T00:00:00.000000Z",
+            "to": "2025-12-31T23:59:59.000000Z"
+        },
+        "status_breakdown": {
+            "paid": {"count": 5, "total_amount": 250000},
+            "pending": {"count": 2, "total_amount": 100000},
+            "failed": {"count": 1, "total_amount": 50000}
+        },
+        "method_breakdown": {
+            "invoice": {"count": 6, "total_amount": 300000},
+            "virtual_account": {"count": 2, "total_amount": 100000}
+        },
+        "monthly_trends": [
+            {"month": "2025-01", "count": 2, "total_amount": 100000},
+            {"month": "2025-02", "count": 3, "total_amount": 150000}
+        ],
+        "category_breakdown": [
+            {"category_name": "Technology", "count": 4, "total_amount": 200000},
+            {"category_name": "Arts & Culture", "count": 2, "total_amount": 100000}
+        ],
+        "summary": {
+            "total_payments": 8,
+            "total_amount": 400000,
+            "average_amount": 50000,
+            "success_rate": 87.5
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xendit Payment Gateway API -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Xendit Payment Gateway API</h2>
+            
+            <!-- Create Payment -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/payments/create</span>
+                </div>
+                <p class="text-gray-600 mb-3">Create payment for event using Xendit</p>
+                
+                <h4 class="font-semibold mb-2">Request Body:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "event_id": 9,
+    "payment_method": "invoice",
+    "bank_code": "BCA",           // Optional: untuk virtual_account
+    "ewallet_type": "OVO"         // Optional: untuk ewallet
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Payment Methods:</h4>
+                <ul class="list-disc list-inside text-gray-600 mb-4">
+                    <li><code>invoice</code> - Credit Card (Snap Xendit)</li>
+                    <li><code>virtual_account</code> - Virtual Account (BCA, BNI, BRI, MANDIRI)</li>
+                    <li><code>ewallet</code> - E-Wallet (OVO, DANA, LINKAJA, SHOPEEPAY)</li>
+                </ul>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Payment created successfully",
+    "data": {
+        "participant": {
+            "id": 93,
+            "user_id": 24,
+            "event_id": 9,
+            "status": "registered",
+            "is_paid": false,
+            "amount_paid": null,
+            "payment_reference": "690251be8a9cf659daae6bcb",
+            "qr_code": "qr_codes/participants/user_24_event_9_1761757593_69024999af04a.svg",
+            "qr_code_string": "user_24_event_9_1761757593_69024999af04a",
+            "payment_url": null,
+            "payment_status": "pending",
+            "payment_method": null,
+            "attended_at": null,
+            "created_at": "2025-10-29T17:05:28.000000Z",
+            "updated_at": "2025-10-29T17:22:13.000000Z"
+        },
+        "payment_url": "https://checkout-staging.xendit.co/web/690251be8a9cf659daae6bcb",
+        "payment_reference": "690251be8a9cf659daae6bcb",
+        "payment_method": "invoice",
+        "event": {
+            "id": 9,
+            "title": "Digital Art Exhibition",
+            "start_date": "2025-11-24T16:25:39.000000Z",
+            "location": "Jakarta Art Gallery"
+        },
+        "attendance_qr": {
+            "qr_code": "qr_codes/participants/user_24_event_9_1761757593_69024999af04a.svg",
+            "qr_code_url": "http://localhost:8000/storage/qr_codes/participants/user_24_event_9_1761757593_69024999af04a.svg",
+            "qr_code_string": "user_24_event_9_1761757593_69024999af04a",
+            "message": "Use this QR code for attendance check-in at the event"
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Payment Methods -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/payments/methods</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get available payment methods</p>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "invoice": {
+            "name": "Credit Card",
+            "description": "Pay with credit card via Xendit",
+            "icon": "credit-card"
+        },
+        "virtual_account": {
+            "name": "Virtual Account",
+            "description": "Pay via bank transfer",
+            "banks": ["BCA", "BNI", "BRI", "MANDIRI"]
+        },
+        "ewallet": {
+            "name": "E-Wallet",
+            "description": "Pay with digital wallet",
+            "providers": ["OVO", "DANA", "LINKAJA", "SHOPEEPAY"]
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Xendit Webhook -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/payments/webhook</span>
+                </div>
+                <p class="text-gray-600 mb-3">Xendit webhook endpoint (called by Xendit)</p>
+                
+                <h4 class="font-semibold mb-2">Headers:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "X-Xendit-Signature": "{webhook_signature}",
+    "Content-Type": "application/json"
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Webhook Payload (from Xendit):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "id": "690251be8a9cf659daae6bcb",
+    "external_id": "event_9_participant_93_1761757593_69024999af04a",
+    "user_id": "5e8b4c4b4b4b4b4b4b4b4b4b",
+    "status": "PAID",
+    "merchant_name": "Event Connect",
+    "amount": 50000,
+    "description": "Payment for event: Digital Art Exhibition",
+    "invoice_url": "https://checkout-staging.xendit.co/web/690251be8a9cf659daae6bcb",
+    "expiry_date": "2025-10-30T17:22:13.000Z",
+    "created": "2025-10-29T17:22:13.000Z",
+    "updated": "2025-10-29T17:25:00.000Z",
+    "currency": "IDR",
+    "paid_at": "2025-10-29T17:25:00.000Z",
+    "payment_method": "CREDIT_CARD",
+    "payment_channel": "CREDIT_CARD",
+    "payment_destination": "CREDIT_CARD"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Super Admin API -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Super Admin API</h2>
+            <p class="text-gray-600 mb-4">APIs for Super Admin to manage all event organizers and events</p>
+            
+            <!-- Get Event Organizers -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/super-admin/organizers</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get all event organizers with their events</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "search": "john",                    // Optional: search by name/email
+    "status": "active|inactive",         // Optional: filter by status
+    "per_page": 10                       // Optional, default: 10
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "organizers": [
+            {
+                "id": 3,
+                "name": "Sarah Johnson",
+                "email": "sarah@workshop.com",
+                "phone": "+6281234567890",
+                "bio": "Event management expert",
+                "avatar": null,
+                "role": "admin",
+                "is_organizer": true,
+                "created_at": "2025-10-14T09:22:29.000000Z",
+                "updated_at": "2025-10-14T09:22:29.000000Z",
+                "events": {
+                    "total": 5,
+                    "published": 3,
+                    "draft": 1,
+                    "completed": 1,
+                    "cancelled": 0,
+                    "total_participants": 150,
+                    "total_revenue": 750000,
+                    "recent_events": [
+                        {
+                            "id": 9,
+                            "title": "Digital Art Exhibition",
+                            "status": "published",
+                            "start_date": "2025-11-24T16:25:39.000000Z",
+                            "location": "Jakarta Art Gallery",
+                            "price": 50000,
+                            "is_paid": true,
+                            "registered_count": 25,
+                            "quota": 100,
+                            "category": {
+                                "id": 5,
+                                "name": "Arts & Culture",
+                                "color": "#8B5CF6"
+                            },
+                            "created_at": "2025-10-29T16:25:39.000000Z"
+                        }
+                    ]
+                }
+            }
+        ],
+        "pagination": {
+            "current_page": 1,
+            "last_page": 1,
+            "per_page": 10,
+            "total": 5,
+            "from": 1,
+            "to": 5,
+            "has_more_pages": false
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get All Events -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/super-admin/events</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get all events from all organizers</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "search": "conference",              // Optional: search by title/description
+    "status": "published|draft|completed|cancelled", // Optional
+    "category_id": 1,                    // Optional: filter by category
+    "organizer_id": 3,                   // Optional: filter by organizer
+    "date_from": "2025-01-01",           // Optional
+    "date_to": "2025-12-31",             // Optional
+    "per_page": 10                       // Optional, default: 10
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "events": [
+            {
+                "id": 9,
+                "title": "Digital Art Exhibition",
+                "description": "Contemporary digital art exhibition...",
+                "location": "Jakarta Art Gallery",
+                "start_date": "2025-11-24T16:25:39.000000Z",
+                "end_date": "2025-11-24T18:25:39.000000Z",
+                "price": "50000.00",
+                "is_paid": true,
+                "quota": 100,
+                "registered_count": 25,
+                "status": "published",
+                "is_active": true,
+                "image": "events/digital-art-exhibition.jpg",
+                "qr_code": "qr_codes/event_1234567890_abc123.svg",
+                "created_at": "2025-10-29T16:25:39.000000Z",
+                "updated_at": "2025-10-29T16:25:39.000000Z",
+                "organizer": {
+                    "id": 3,
+                    "name": "Sarah Johnson",
+                    "email": "sarah@workshop.com",
+                    "phone": "+6281234567890",
+                    "role": "admin"
+                },
+                "category": {
+                    "id": 5,
+                    "name": "Arts & Culture",
+                    "color": "#8B5CF6"
+                },
+                "participants": {
+                    "total": 25,
+                    "attended": 15,
+                    "registered": 10,
+                    "cancelled": 0
+                }
+            }
+        ],
+        "pagination": {
+            "current_page": 1,
+            "last_page": 3,
+            "per_page": 10,
+            "total": 25,
+            "from": 1,
+            "to": 10,
+            "has_more_pages": true
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Statistics -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/super-admin/statistics</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get overall statistics for all organizers and events</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "date_from": "2024-01-01",    // Optional, default: 12 months ago
+    "date_to": "2025-12-31"       // Optional, default: now
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "statistics": {
+            "total_organizers": 15,
+            "total_events": 150,
+            "total_participants": 5000,
+            "total_revenue": 25000000
+        },
+        "period_statistics": {
+            "organizers": 10,
+            "events": 75,
+            "participants": 2500,
+            "revenue": 12500000
+        },
+        "event_status_breakdown": {
+            "published": 100,
+            "draft": 25,
+            "completed": 20,
+            "cancelled": 5
+        },
+        "monthly_trends": [
+            {"month": "2025-01", "count": 10, "total_amount": 5000000},
+            {"month": "2025-02", "count": 15, "total_amount": 7500000}
+        ],
+        "top_organizers": [
+            {
+                "id": 3,
+                "name": "Sarah Johnson",
+                "email": "sarah@workshop.com",
+                "events_count": 25
+            }
+        ],
+        "category_breakdown": [
+            {"name": "Technology", "count": 50, "total_amount": 10000000},
+            {"name": "Arts & Culture", "count": 30, "total_amount": 6000000}
+        ]
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Toggle Organizer Status -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/super-admin/organizers/{id}/toggle-status</span>
+                </div>
+                <p class="text-gray-600 mb-3">Toggle organizer status (activate/deactivate)</p>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Organizer status updated successfully",
+    "data": {
+        "user": {
+            "id": 3,
+            "name": "Sarah Johnson",
+            "email": "sarah@workshop.com",
+            "is_organizer": true
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Organizer Details -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/super-admin/organizers/{id}</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get detailed information about a specific organizer</p>
+
+                <h4 class="font-semibold mb-2">Response:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "id": 3,
+        "name": "Sarah Johnson",
+        "email": "sarah@workshop.com",
+        "phone": "+6281234567890",
+        "bio": "Event management expert",
+        "avatar": null,
+        "role": "admin",
+        "is_organizer": true,
+        "created_at": "2025-10-14T09:22:29.000000Z",
+        "events": [
+            {
+                "id": 9,
+                "title": "Digital Art Exhibition",
+                "description": "Contemporary digital art exhibition...",
+                "location": "Jakarta Art Gallery",
+                "start_date": "2025-11-24T16:25:39.000000Z",
+                "end_date": "2025-11-24T18:25:39.000000Z",
+                "price": "50000.00",
+                "is_paid": true,
+                "quota": 100,
+                "registered_count": 25,
+                "status": "published",
+                "is_active": true,
+                "category": {
+                    "id": 5,
+                    "name": "Arts & Culture",
+                    "color": "#8B5CF6"
+                },
+                "participants": {
+                    "total": 25,
+                    "attended": 15,
+                    "registered": 10,
+                    "cancelled": 0
+                },
+                "created_at": "2025-10-29T16:25:39.000000Z"
+            }
+        ]
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="text-center text-gray-600 py-8">
             <p>Event Connect API Documentation - Generated on {{ date('Y-m-d H:i:s') }}</p>
@@ -632,3 +1217,5 @@
     </script>
 </body>
 </html>
+
+

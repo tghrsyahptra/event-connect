@@ -44,9 +44,11 @@ class UserController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+        $users = $query->with(['eventParticipants.event' => function($query) use ($eventIds) {
+            $query->whereIn('id', $eventIds);
+        }])->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users', compact('users'));
     }
 
     /**

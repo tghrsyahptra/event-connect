@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EventController extends Controller
 {
@@ -80,11 +81,13 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'organizer_id' => 'required|exists:users,id',
             'start_date' => 'required|date|after:now',
             'end_date' => 'required|date|after:start_date',
             'location' => 'required|string|max:255',
-            'max_participants' => 'required|integer|min:1',
+            'event_type' => 'nullable|in:offline,online,hybrid',
+            'contact_info' => 'nullable|string',
+            'requirements' => 'nullable|string',
+            'quota' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:draft,published,cancelled,completed',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -98,7 +101,15 @@ class EventController extends Controller
 
         $data = $request->all();
         $data['user_id'] = auth()->id(); // Set organizer as event creator
-        $data['organizer_id'] = auth()->id(); // Also set organizer_id for compatibility
+        
+        // Set is_paid based on price
+        $data['is_paid'] = $request->price > 0;
+        
+        // Rename max_participants to quota
+        if (isset($data['max_participants'])) {
+            $data['quota'] = $data['max_participants'];
+            unset($data['max_participants']);
+        }
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -106,9 +117,23 @@ class EventController extends Controller
             $data['image'] = $imagePath;
         }
 
-        Event::create($data);
+        // Generate QR code
+        $qrCodeString = 'event_' . time() . '_' . uniqid();
+        
+        // Store QR code string first
+        $data['qr_code'] = $qrCodeString;
 
-        return redirect()->route('admin.events')
+        $event = Event::create($data);
+
+        // Generate QR code image (using SVG format for better compatibility)
+        $qrCodePath = 'qr_codes/' . $qrCodeString . '.svg';
+        QrCode::format('svg')->size(200)->generate($qrCodeString, storage_path('app/public/' . $qrCodePath));
+        
+        // Update with image path for display, but keep original string for searching
+        // We'll store both: use qr_code for display path, but search works with basename
+        $event->update(['qr_code' => $qrCodePath]);
+
+        return redirect()->route('admin.events.index')
             ->with('success', 'Event created successfully!');
     }
 
@@ -141,11 +166,13 @@ class EventController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'organizer_id' => 'required|exists:users,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'location' => 'required|string|max:255',
-            'max_participants' => 'required|integer|min:1',
+            'event_type' => 'nullable|in:offline,online,hybrid',
+            'contact_info' => 'nullable|string',
+            'requirements' => 'nullable|string',
+            'quota' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:draft,published,cancelled,completed',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -159,7 +186,15 @@ class EventController extends Controller
 
         $data = $request->all();
         $data['user_id'] = auth()->id(); // Ensure organizer owns the event
-        $data['organizer_id'] = auth()->id(); // Also set organizer_id for compatibility
+        
+        // Set is_paid based on price
+        $data['is_paid'] = $request->price > 0;
+        
+        // Rename max_participants to quota if exists
+        if (isset($data['max_participants'])) {
+            $data['quota'] = $data['max_participants'];
+            unset($data['max_participants']);
+        }
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -174,7 +209,7 @@ class EventController extends Controller
 
         $event->update($data);
 
-        return redirect()->route('admin.events')
+        return redirect()->route('admin.events.index')
             ->with('success', 'Event updated successfully!');
     }
 

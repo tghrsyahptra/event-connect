@@ -13,12 +13,15 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
+                    <a href="{{ route('events.index') }}" class="flex-shrink-0 flex items-center hover:opacity-80 transition-opacity">
                         <i class="fas fa-calendar-alt text-blue-600 text-2xl mr-2"></i>
                         <span class="text-xl font-bold text-gray-800">Event Connect</span>
-                    </div>
+                    </a>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <a href="{{ route('events.index') }}" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-search mr-1"></i>Browse Events
+                    </a>
                     <span class="text-gray-700">Welcome, {{ Auth::user()->full_name }}</span>
                     <div class="relative">
                         <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -132,9 +135,9 @@
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                             <i class="fas fa-check mr-1"></i>Joined
                                         </span>
-                                        <button class="text-blue-600 hover:text-blue-800">
+                                        <a href="{{ route('events.show', 1) }}" class="text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-eye"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -150,9 +153,9 @@
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                             <i class="fas fa-clock mr-1"></i>Pending
                                         </span>
-                                        <button class="text-blue-600 hover:text-blue-800">
+                                        <a href="{{ route('events.show', 2) }}" class="text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-eye"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -167,8 +170,11 @@
                     <div class="px-4 py-5 sm:p-6">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
                         <div class="space-y-3">
-                            <a href="#" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                            <a href="{{ route('events.index') }}" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                                 <i class="fas fa-search mr-2"></i>Browse Events
+                            </a>
+                            <a href="{{ route('attendance.scanner') }}" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                                <i class="fas fa-qrcode mr-2"></i>Scan QR Code
                             </a>
                             <a href="#" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                                 <i class="fas fa-user mr-2"></i>Edit Profile

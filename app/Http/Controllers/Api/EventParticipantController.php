@@ -50,13 +50,29 @@ class EventParticipantController extends Controller
 
         DB::beginTransaction();
         try {
+            // Generate unique QR code for this user and event
+            $qrCodeString = 'user_' . $user->id . '_event_' . $event->id . '_' . time() . '_' . uniqid();
+            $qrCodePath = 'qr_codes/participants/' . $qrCodeString . '.svg';
+            
+            // Create directory if it doesn't exist
+            $qrCodeDir = storage_path('app/public/qr_codes/participants');
+            if (!is_dir($qrCodeDir)) {
+                mkdir($qrCodeDir, 0755, true);
+            }
+            
+            // Generate QR code image
+            \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(200)->generate($qrCodeString, storage_path('app/public/' . $qrCodePath));
+            
             // Create participant record
             $participant = EventParticipant::create([
                 'user_id' => $user->id,
                 'event_id' => $event->id,
                 'status' => 'registered',
-                'is_paid' => !$event->is_paid, // Free events are automatically paid
-                'amount_paid' => $event->is_paid ? 0 : null,
+                'is_paid' => $event->price <= 0, // Only free events are automatically paid
+                'amount_paid' => $event->price <= 0 ? 0 : null,
+                'payment_status' => $event->price <= 0 ? 'paid' : 'pending',
+                'qr_code' => $qrCodePath,
+                'qr_code_string' => $qrCodeString,
             ]);
 
             // Update event registered count
@@ -77,10 +93,27 @@ class EventParticipantController extends Controller
 
             DB::commit();
 
+            // Prepare response data with user-specific QR code
+            $responseData = [
+                'participant' => $participant,
+                'event' => [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'start_date' => $event->start_date,
+                    'location' => $event->location,
+                ],
+                'attendance_qr' => [
+                    'qr_code' => $participant->qr_code,
+                    'qr_code_url' => $participant->qr_code ? asset('storage/' . $participant->qr_code) : null,
+                    'qr_code_string' => $participant->qr_code_string,
+                    'message' => 'Use this QR code for attendance check-in at the event'
+                ]
+            ];
+
             return response()->json([
                 'success' => true,
                 'message' => $event->is_paid ? 'Registration successful. Please complete payment.' : 'Successfully joined the event',
-                'data' => $participant
+                'data' => $responseData
             ]);
 
         } catch (\Exception $e) {
@@ -170,27 +203,20 @@ class EventParticipantController extends Controller
 
         $user = $request->user();
 
-        // Find event by QR code
-        $event = Event::where('qr_code', 'like', '%' . $request->qr_code . '%')->first();
-
-        if (!$event) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid QR code'
-            ], 400);
-        }
-
-        // Check if user is registered for this event
-        $participant = EventParticipant::where('user_id', $user->id)
-            ->where('event_id', $event->id)
+        // Find participant by their unique QR code
+        $qrCodeString = $request->qr_code;
+        $participant = EventParticipant::where('qr_code_string', $qrCodeString)
+            ->where('user_id', $user->id)
             ->first();
 
         if (!$participant) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not registered for this event'
+                'message' => 'Invalid QR code or you are not authorized to use this QR code'
             ], 400);
         }
+
+        $event = $participant->event;
 
         if ($participant->status === 'attended') {
             return response()->json([
