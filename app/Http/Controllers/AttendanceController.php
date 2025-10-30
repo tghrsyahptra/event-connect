@@ -23,8 +23,8 @@ class AttendanceController extends Controller
      */
     public function showQRCode(Event $event)
     {
-        // Check if user is the organizer of this event
-        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        // Check if user is organizer of this event or super admin
+        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin() && !(method_exists(Auth::user(), 'isSuperAdmin') && Auth::user()->isSuperAdmin())) {
             abort(403, 'You are not authorized to view this QR code');
         }
 
@@ -81,8 +81,8 @@ class AttendanceController extends Controller
      */
     public function getParticipants(Event $event)
     {
-        // Check if user is the organizer
-        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        // Check if user is organizer or super admin
+        if ($event->user_id !== Auth::id() && !Auth::user()->isAdmin() && !(method_exists(Auth::user(), 'isSuperAdmin') && Auth::user()->isSuperAdmin())) {
             abort(403, 'You are not authorized to view participants');
         }
 

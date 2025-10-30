@@ -26,7 +26,6 @@ class User extends Authenticatable
         'phone',
         'bio',
         'avatar',
-        'is_organizer',
         'password',
     ];
 
@@ -50,7 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_organizer' => 'boolean',
+            // is_organizer removed; organizer determined by role
         ];
     }
 
@@ -78,7 +77,7 @@ class User extends Authenticatable
     // Organizer checking methods (Admin = Event Organizer)
     public function isOrganizer()
     {
-        return $this->is_organizer || $this->isAdmin() || $this->isSuperAdmin();
+        return $this->isAdmin() || $this->isSuperAdmin();
     }
 
     public function canCreateEvents()

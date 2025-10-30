@@ -19,7 +19,13 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->hasRole($role)) {
+        $user = auth()->user();
+        // Super admin bypasses all role checks
+        if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
+            return $next($request);
+        }
+
+        if (!$user->hasRole($role)) {
             abort(403, 'Unauthorized access');
         }
 

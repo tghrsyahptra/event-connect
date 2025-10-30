@@ -21,12 +21,38 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // If super admin, show all admins (event organizers)
+        if (auth()->user()->isSuperAdmin()) {
+            $query = User::where('role', 'admin');
+
+            // Optional role filter
+            if ($request->has('role') && $request->role) {
+                $query->where('role', $request->role);
+            }
+
+            // Search
+            if ($request->has('search') && $request->search) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('full_name', 'like', "%{$search}%");
+                });
+            }
+
+            $users = $query
+                ->withCount('events')
+                ->with(['eventParticipants'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+            return view('admin.users', compact('users'));
+        }
+
         $organizerId = auth()->id();
-        
         // Get participants from organizer's events
         $eventIds = Event::where('user_id', $organizerId)->pluck('id');
         $participantIds = EventParticipant::whereIn('event_id', $eventIds)->pluck('user_id');
-        
         $query = User::whereIn('id', $participantIds);
 
         // Search functionality
@@ -72,7 +98,7 @@ class UserController extends Controller
             'role' => 'required|in:admin,participant',
             'phone' => 'nullable|string|max:20',
             'bio' => 'nullable|string|max:1000',
-            'is_organizer' => 'boolean',
+            // is_organizer removed
         ]);
 
         if ($validator->fails()) {
@@ -89,7 +115,7 @@ class UserController extends Controller
             'role' => $request->role,
             'phone' => $request->phone,
             'bio' => $request->bio,
-            'is_organizer' => $request->has('is_organizer'),
+            // is_organizer removed
         ]);
 
         return redirect()->route('admin.users')
@@ -140,7 +166,7 @@ class UserController extends Controller
             'role' => $request->role,
             'phone' => $request->phone,
             'bio' => $request->bio,
-            'is_organizer' => $request->has('is_organizer'),
+            // is_organizer removed
         ]);
 
         // Update password if provided

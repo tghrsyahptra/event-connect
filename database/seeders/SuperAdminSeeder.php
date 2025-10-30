@@ -22,7 +22,6 @@ class SuperAdminSeeder extends Seeder
                 'name' => $name,
                 'full_name' => $name,
                 'role' => 'super_admin',
-                'is_organizer' => true,
             ]);
             return;
         }
@@ -33,7 +32,6 @@ class SuperAdminSeeder extends Seeder
             'email' => $email,
             'password' => Hash::make('password123'),
             'role' => 'super_admin',
-            'is_organizer' => true,
         ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ParticipantEventController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AttendanceController;
@@ -16,7 +17,7 @@ use App\Http\Controllers\AttendanceController;
 Route::get('/', function () {
     if (Auth::check()) {
         // If user is logged in, redirect to appropriate dashboard
-        if (Auth::user()->isAdmin()) {
+        if (Auth::user()->isSuperAdmin() || Auth::user()->isAdmin()) {
             return redirect()->route('admin.dashboard');
         } else {
             return redirect()->route('participant.dashboard');
@@ -58,7 +59,7 @@ Route::get('/payments/failure', [PaymentController::class, 'failure'])->name('pa
 Route::get('/payments/status/{participant}', [PaymentController::class, 'status'])->name('payments.status');
 
         // Admin Dashboard Routes (Organizer-specific data)
-        Route::middleware(['auth', 'role:admin', 'organizer.scope'])->prefix('admin')->group(function () {
+        Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     
@@ -103,4 +104,8 @@ Route::get('/payments/status/{participant}', [PaymentController::class, 'status'
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin.analytics');
     Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('admin.analytics.export');
     Route::get('/analytics/realtime', [AnalyticsController::class, 'realtime'])->name('admin.analytics.realtime');
+
+    // Finance
+    Route::get('/finance', [FinanceController::class, 'index'])->name('admin.finance.index');
+    Route::get('/events/{event}/finance', [FinanceController::class, 'show'])->name('admin.events.finance');
 });

@@ -61,7 +61,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
-                'is_organizer' => true,
+                
                 'phone' => '+6281234567890',
                 'bio' => 'System administrator for Event Connect platform',
                 'avatar' => null,
@@ -75,7 +75,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
-                'is_organizer' => true,
+                
                 'phone' => '+6281234567891',
                 'bio' => 'Tech conference organizer with 5+ years experience',
                 'avatar' => null,
@@ -89,7 +89,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
-                'is_organizer' => true,
+                
                 'phone' => '+6281234567892',
                 'bio' => 'Workshop specialist and event management expert',
                 'avatar' => null,
@@ -103,7 +103,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
-                'is_organizer' => true,
+                
                 'phone' => '+6281234567893',
                 'bio' => 'Startup ecosystem builder and pitch competition organizer',
                 'avatar' => null,
@@ -119,7 +119,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567894',
                 'bio' => 'Full-stack developer passionate about learning new technologies',
                 'avatar' => null,
@@ -133,7 +133,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567895',
                 'bio' => 'UI/UX designer with focus on user experience',
                 'avatar' => null,
@@ -147,7 +147,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567896',
                 'bio' => 'Project manager with expertise in agile methodologies',
                 'avatar' => null,
@@ -161,7 +161,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567897',
                 'bio' => 'Computer science student eager to learn and network',
                 'avatar' => null,
@@ -175,7 +175,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567898',
                 'bio' => 'Serial entrepreneur looking for networking opportunities',
                 'avatar' => null,
@@ -189,7 +189,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567899',
                 'bio' => 'Data analyst with expertise in business intelligence',
                 'avatar' => null,
@@ -203,7 +203,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567800',
                 'bio' => 'Digital marketing specialist with social media expertise',
                 'avatar' => null,
@@ -217,7 +217,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567801',
                 'bio' => 'Business consultant with focus on digital transformation',
                 'avatar' => null,
@@ -231,7 +231,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567802',
                 'bio' => 'Research scientist in artificial intelligence and machine learning',
                 'avatar' => null,
@@ -245,7 +245,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567803',
                 'bio' => 'Mobile app developer specializing in React Native',
                 'avatar' => null,
@@ -259,7 +259,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567804',
                 'bio' => 'Graphic designer with expertise in branding and visual identity',
                 'avatar' => null,
@@ -273,7 +273,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567805',
                 'bio' => 'Product manager with experience in SaaS platforms',
                 'avatar' => null,
@@ -287,7 +287,7 @@ class DummyDataSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('password123'),
                 'role' => 'participant',
-                'is_organizer' => false,
+                
                 'phone' => '+6281234567806',
                 'bio' => 'Information technology student with interest in cybersecurity',
                 'avatar' => null,

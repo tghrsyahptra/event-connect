@@ -113,7 +113,7 @@ class ProfileController extends Controller
         $user = $request->user();
         $user->update([
             'role' => $request->role,
-            'is_organizer' => $request->role === 'admin' // Admin = Event Organizer
+            // is_organizer removed; organizer determined by role
         ]);
 
         return response()->json([

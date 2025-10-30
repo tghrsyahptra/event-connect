@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'admin@eventconnect.com',
             'role' => 'admin',
             'password' => Hash::make('admin123'),
-            'is_organizer' => true,
+            
         ]);
 
         // Create sample participant user
@@ -31,7 +31,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'participant@eventconnect.com',
             'role' => 'participant',
             'password' => Hash::make('participant123'),
-            'is_organizer' => false,
+            
         ]);
     }
 }

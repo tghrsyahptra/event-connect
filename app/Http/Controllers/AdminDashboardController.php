@@ -21,6 +21,11 @@ class AdminDashboardController extends Controller
     }
     public function index()
     {
+        // If super admin, direct to organizers listing (admin users)
+        if (auth()->check() && method_exists(auth()->user(), 'isSuperAdmin') && auth()->user()->isSuperAdmin()) {
+            return redirect()->route('admin.users.index');
+        }
+
         // Get basic statistics
         $stats = $this->getDashboardStats();
         

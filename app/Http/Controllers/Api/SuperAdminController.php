@@ -21,11 +21,8 @@ class SuperAdminController extends Controller
         $search = $request->get('search');
         $status = $request->get('status'); // active, inactive
         
-        // Build query for organizers (users with admin role or is_organizer = true)
-        $query = User::where(function($q) {
-            $q->where('role', 'admin')
-              ->orWhere('is_organizer', true);
-        })->with(['events' => function($eventQuery) {
+        // Build query for organizers (users with admin role)
+        $query = User::where('role', 'admin')->with(['events' => function($eventQuery) {
             $eventQuery->with(['category', 'participants'])
                       ->orderBy('created_at', 'desc');
         }]);
@@ -40,11 +37,7 @@ class SuperAdminController extends Controller
         }
 
         // Apply status filter
-        if ($status === 'active') {
-            $query->where('is_organizer', true);
-        } elseif ($status === 'inactive') {
-            $query->where('is_organizer', false);
-        }
+        // status filter removed (is_organizer dropped)
 
         $organizers = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
@@ -60,7 +53,7 @@ class SuperAdminController extends Controller
                 'bio' => $organizer->bio,
                 'avatar' => $organizer->avatar,
                 'role' => $organizer->role,
-                'is_organizer' => $organizer->is_organizer,
+                // organizer flag removed; determined by role
                 'created_at' => $organizer->created_at,
                 'updated_at' => $organizer->updated_at,
                 'events' => [
@@ -231,16 +224,12 @@ class SuperAdminController extends Controller
 
         // Base queries
         $eventsQuery = Event::whereBetween('created_at', [$dateFrom, $dateTo]);
-        $organizersQuery = User::where(function($q) {
-            $q->where('role', 'admin')->orWhere('is_organizer', true);
-        })->whereBetween('created_at', [$dateFrom, $dateTo]);
+        $organizersQuery = User::where('role', 'admin')->whereBetween('created_at', [$dateFrom, $dateTo]);
         $participantsQuery = EventParticipant::whereBetween('created_at', [$dateFrom, $dateTo]);
 
         // Overall statistics
         $statistics = [
-            'total_organizers' => User::where(function($q) {
-                $q->where('role', 'admin')->orWhere('is_organizer', true);
-            })->count(),
+            'total_organizers' => User::where('role', 'admin')->count(),
             'total_events' => Event::count(),
             'total_participants' => EventParticipant::count(),
             'total_revenue' => Event::where('is_paid', true)->sum('price'),
@@ -274,9 +263,7 @@ class SuperAdminController extends Controller
             ->get();
 
         // Top organizers by event count
-        $topOrganizers = User::where(function($q) {
-            $q->where('role', 'admin')->orWhere('is_organizer', true);
-        })
+        $topOrganizers = User::where('role', 'admin')
         ->withCount('events')
         ->orderBy('events_count', 'desc')
         ->limit(10)
@@ -324,19 +311,15 @@ class SuperAdminController extends Controller
             ], 400);
         }
 
-        $user->update([
-            'is_organizer' => !$user->is_organizer
-        ]);
-
         return response()->json([
             'success' => true,
-            'message' => 'Organizer status updated successfully',
+            'message' => 'No status field to toggle (is_organizer removed)',
             'data' => [
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->full_name ?? $user->name,
                     'email' => $user->email,
-                    'is_organizer' => $user->is_organizer,
+                    'role' => $user->role,
                 ]
             ]
         ]);
@@ -368,7 +351,7 @@ class SuperAdminController extends Controller
             'bio' => $organizer->bio,
             'avatar' => $organizer->avatar,
             'role' => $organizer->role,
-            'is_organizer' => $organizer->is_organizer,
+            'role' => $organizer->role,
             'created_at' => $organizer->created_at,
             'events' => $events->map(function ($event) {
                 return [

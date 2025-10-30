@@ -28,10 +28,25 @@
                     <i class="fas fa-calendar-alt mr-3"></i>
                     Events
                 </a>
+                <a href="/admin/finance" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-coins mr-3"></i>
+                    Finance
+                </a>
                 <a href="/admin/categories" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
                     <i class="fas fa-tags mr-3"></i>
                     Categories
                 </a>
+                <a href="/admin/analytics" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-line mr-3"></i>
+                    Analytics
+                </a>
+                <form action="{{ route('logout') }}" method="POST" class="mt-6 px-6">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center justify-start px-0 py-3 text-left text-red-600 hover:bg-red-50 rounded">
+                        <i class="fas fa-sign-out-alt mr-3"></i>
+                        Logout
+                    </button>
+                </form>
             </nav>
         </div>
 
@@ -107,7 +122,11 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($user->is_organizer)
+                                        @if(($user->role ?? null) === 'super_admin')
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <i class="fas fa-star mr-1"></i>Super Admin
+                                            </span>
+                                        @elseif(($user->role ?? null) === 'admin')
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                                 <i class="fas fa-crown mr-1"></i>Organizer
                                             </span>

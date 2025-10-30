@@ -151,14 +151,7 @@
                             @enderror
                         </div>
 
-                        <!-- Is Organizer -->
-                        <div>
-                            <label class="flex items-center">
-                                <input type="checkbox" name="is_organizer" value="1" {{ old('is_organizer') ? 'checked' : '' }} 
-                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                                <span class="ml-2 text-sm text-gray-700">Is Organizer</span>
-                            </label>
-                        </div>
+                        <!-- is_organizer removed; organizer determined by role -->
                     </div>
 
                     <!-- Bio -->

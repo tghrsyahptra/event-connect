@@ -23,8 +23,12 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $organizerId = auth()->id();
-        $query = Event::with(['category', 'organizer'])
-            ->where('user_id', $organizerId); // Only organizer's events
+        $query = Event::with(['category', 'organizer']);
+
+        // If not super admin, limit to current organizer's events
+        if (!(auth()->check() && method_exists(auth()->user(), 'isSuperAdmin') && auth()->user()->isSuperAdmin())) {
+            $query->where('user_id', $organizerId); // Only organizer's events
+        }
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -44,6 +48,11 @@ class EventController extends Controller
         // Filter by status
         if ($request->has('status') && $request->status) {
             $query->where('status', $request->status);
+        }
+
+        // For super admin: allow filter by organizer
+        if ($request->has('organizer_id') && $request->organizer_id) {
+            $query->where('user_id', $request->organizer_id);
         }
 
         // Filter by date range
