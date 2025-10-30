@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         
         $this->call([
             DummyDataSeeder::class,
+            SuperAdminSeeder::class,
         ]);
 
         $this->command->info('✅ Database seeding completed!');
