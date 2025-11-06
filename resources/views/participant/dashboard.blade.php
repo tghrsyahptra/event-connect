@@ -155,20 +155,24 @@
                                                 
                                                 <div class="mt-2 flex items-center gap-2">
                                                     <!-- Status Badge -->
-                                                    @if($participation->registration_status === 'approved')
+                                                    @if($participation->status === 'attended')
                                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                            <i class="fas fa-check mr-1"></i>Approved
+                                                            <i class="fas fa-check-circle mr-1"></i>Attended
                                                         </span>
-                                                    @elseif($participation->registration_status === 'pending')
+                                                    @elseif($participation->status === 'registered')
                                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                            <i class="fas fa-clock mr-1"></i>Pending
+                                                            <i class="fas fa-clock mr-1"></i>Registered
+                                                        </span>
+                                                    @elseif($participation->status === 'cancelled')
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                            <i class="fas fa-times mr-1"></i>Cancelled
                                                         </span>
                                                     @endif
 
-                                                    <!-- Attendance Badge -->
-                                                    @if($participation->attendance_status === 'attended')
+                                                    <!-- Payment Status Badge -->
+                                                    @if($participation->is_paid)
                                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                            <i class="fas fa-check-circle mr-1"></i>Attended
+                                                            <i class="fas fa-check mr-1"></i>Paid
                                                         </span>
                                                     @endif
                                                 </div>
@@ -182,7 +186,7 @@
                                                 </a>
 
                                                 <!-- Feedback & Certificate Actions -->
-                                                @if($participation->attendance_status === 'attended')
+                                                @if($participation->status === 'attended')
                                                     @php
                                                         $feedback = $participation->event->feedbacks->where('user_id', Auth::id())->first();
                                                     @endphp

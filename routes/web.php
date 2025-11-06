@@ -13,7 +13,6 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ParticipantEventController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\Web\FeedbackController as WebFeedbackController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -110,8 +109,7 @@ Route::get('/payments/status/{participant}', [PaymentController::class, 'status'
     Route::get('/finance', [FinanceController::class, 'index'])->name('admin.finance.index');
     Route::get('/events/{event}/finance', [FinanceController::class, 'show'])->name('admin.events.finance');
 });
-
-// Feedback routes (Participant only)
+use App\Http\Controllers\Web\FeedbackController as WebFeedbackController;
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/feedback/create/{event}', [WebFeedbackController::class, 'create'])->name('feedback.create');
     Route::post('/feedback/store/{event}', [WebFeedbackController::class, 'store'])->name('feedback.store');

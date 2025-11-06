@@ -30,7 +30,7 @@ class FeedbackController extends Controller
         }
 
         // Check attendance status
-        if ($participant->attendance_status !== 'attended') {
+        if ($participant->status !== 'attended') {
             return redirect()->back()->with('error', 'You must attend the event before giving feedback.');
         }
 
@@ -67,7 +67,7 @@ class FeedbackController extends Controller
         // Check if user is a participant and has attended
         $participant = EventParticipant::where('event_id', $event->id)
             ->where('user_id', $user->id)
-            ->where('attendance_status', 'attended')
+            ->where('status', 'attended')
             ->first();
 
         if (!$participant) {
@@ -122,7 +122,7 @@ class FeedbackController extends Controller
         // Check if user attended the event
         $participant = EventParticipant::where('event_id', $event->id)
             ->where('user_id', $user->id)
-            ->where('attendance_status', 'attended')
+            ->where('status', 'attended')
             ->first();
 
         if (!$participant) {
@@ -169,7 +169,7 @@ class FeedbackController extends Controller
         // Check if user attended the event
         $participant = EventParticipant::where('event_id', $event->id)
             ->where('user_id', $user->id)
-            ->where('attendance_status', 'attended')
+            ->where('status', 'attended')
             ->first();
 
         if (!$participant) {

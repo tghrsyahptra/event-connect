@@ -21,7 +21,7 @@ class ParticipantDashboardController extends Controller
         // Calculate statistics
         $stats = [
             'total_registered' => $myEvents->count(),
-            'attended_events' => $myEvents->where('attendance_status', 'attended')->count(),
+            'attended_events' => $myEvents->where('status', 'attended')->count(),
             'upcoming_events' => $myEvents->filter(function ($participation) {
                 return $participation->event->start_date->isFuture() && 
                        $participation->registration_status === 'approved';

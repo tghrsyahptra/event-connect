@@ -107,11 +107,15 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Category management routes (Admin only)
-    Route::prefix('categories')->group(function () {
-        Route::post('/', [CategoryController::class, 'store']);
-        Route::put('{category}', [CategoryController::class, 'update']);
-        Route::delete('{category}', [CategoryController::class, 'destroy']);
-    });
+    // ==================== CATEGORY MANAGEMENT (Admin & Super Admin only) ====================
+    Route::prefix('categories')
+        ->middleware('role:admin') 
+        ->group(function () {
+            Route::post('/', [CategoryController::class, 'store']);
+            Route::put('{category}', [CategoryController::class, 'update']);
+            Route::delete('{category}', [CategoryController::class, 'destroy']);
+        });
+
 
     // Super Admin routes
     Route::prefix('super-admin')->middleware('role:super_admin')->group(function () {

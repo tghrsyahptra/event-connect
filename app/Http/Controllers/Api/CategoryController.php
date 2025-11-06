@@ -26,6 +26,26 @@ class CategoryController extends Controller
     }
 
     /**
+     * ✅ Get category by ID
+     */
+    public function show($id): JsonResponse
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Category not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $category
+        ]);
+    }
+
+    /**
      * Create new category (Admin only)
      */
     public function store(Request $request): JsonResponse
