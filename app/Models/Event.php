@@ -87,6 +87,18 @@ class Event extends Model
         });
     }
 
+    // Tambahkan juga helper method untuk cek apakah user sudah memberikan feedback
+public function hasFeedbackFrom($userId)
+{
+    return $this->feedbacks()->where('user_id', $userId)->exists();
+}
+
+// Method untuk mendapatkan feedback dari user tertentu
+public function getFeedbackFrom($userId)
+{
+    return $this->feedbacks()->where('user_id', $userId)->first();
+}
+
     // Accessors
     public function getIsFullAttribute()
     {
@@ -102,4 +114,6 @@ class Event extends Model
     {
         return $this->end_date < now();
     }
+
+    
 }
