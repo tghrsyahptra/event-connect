@@ -11,7 +11,8 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\SuperAdminController;
-
+use App\Http\Controllers\Api\AnalyticsController;
+use App\Http\Controllers\Api\AdminDashboardController; // Add this import
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -115,7 +116,24 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('{category}', [CategoryController::class, 'update']);
             Route::delete('{category}', [CategoryController::class, 'destroy']);
         });
+    // ==================== ADMIN DASHBOARD API ROUTES ====================
+    Route::prefix('admin')
+        ->middleware('role:admin')
+        ->group(function () {
+            // Dashboard Overview
+            Route::get('dashboard', [AdminDashboardController::class, 'index']);
+        });
 
+    // ==================== ANALYTICS API ROUTES ====================
+    Route::prefix('analytics')
+        ->middleware('role:admin')
+        ->group(function () {
+            // Main Analytics Dashboard
+            Route::get('/', [AnalyticsController::class, 'index']);
+            
+            // Export Analytics
+            Route::post('export', [AnalyticsController::class, 'export']);
+        });
 
     // Super Admin routes
     Route::prefix('super-admin')->middleware('role:super_admin')->group(function () {
@@ -126,4 +144,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('statistics', [SuperAdminController::class, 'getStatistics']);
     });
     
+    // Notification routes
+Route::prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::post('{notification}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::get('unread-count', [NotificationController::class, 'unreadCount']);
+    Route::delete('{notification}', [NotificationController::class, 'destroy']);
+    
+    // Event reminder routes (NEW)
+    Route::post('send-reminder', [NotificationController::class, 'sendEventReminder']);
+    Route::get('upcoming-reminders', [NotificationController::class, 'getUpcomingReminders']);
+});
 });
