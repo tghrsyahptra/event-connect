@@ -29,6 +29,9 @@ class Event extends Model
         'qr_code',
         'status',
         'is_active',
+        'feedback_summary',
+        'feedback_summary_generated_at',
+        'feedback_count_at_summary'
     ];
 
     protected function casts(): array
@@ -39,6 +42,7 @@ class Event extends Model
             'is_paid' => 'boolean',
             'price' => 'decimal:2',
             'is_active' => 'boolean',
+            'feedback_summary_generated_at' => 'datetime'
         ];
     }
 

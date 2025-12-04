@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AdminDashboardController; // Add this import
+use App\Http\Controllers\Api\FeedbackSummaryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -156,4 +157,12 @@ Route::prefix('notifications')->group(function () {
     Route::post('send-reminder', [NotificationController::class, 'sendEventReminder']);
     Route::get('upcoming-reminders', [NotificationController::class, 'getUpcomingReminders']);
 });
+
+    // Feedback Summary Routes (EO only)
+    Route::prefix('events/{event}')->group(function () {
+        Route::post('/feedback/generate-summary', [FeedbackSummaryController::class, 'generateSummary']);
+        Route::get('/feedback/summary', [FeedbackSummaryController::class, 'getSummary']);
+        Route::get('/feedback/summary/detailed', [FeedbackSummaryController::class, 'getDetailedSummary']);
+    });
+
 });

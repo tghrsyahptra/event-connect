@@ -13,6 +13,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ParticipantEventController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Api\FeedbackSummaryController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -116,4 +117,8 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/feedback/my-feedbacks', [WebFeedbackController::class, 'myFeedbacks'])->name('feedback.my-feedbacks');
     Route::get('/feedback/certificate/{event}/download', [WebFeedbackController::class, 'downloadCertificate'])->name('feedback.certificate.download');
     Route::get('/feedback/certificate/{event}/view', [WebFeedbackController::class, 'viewCertificate'])->name('feedback.certificate.view');
+});
+
+Route::get('/test-feedback-summary', function () {
+    return view('test-feedback-summary');
 });

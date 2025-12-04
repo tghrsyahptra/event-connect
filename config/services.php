@@ -42,5 +42,11 @@ return [
         'callback_url' => env('XENDIT_CALLBACK_URL'),
         'redirect_url' => env('XENDIT_REDIRECT_URL'),
     ],
+'groq' => [
+    'api_key' => env('GROQ_API_KEY'),
+    'model' => env('GROQ_MODEL'),
+    'api_url' => env('GROQ_API_URL'),
+],
+
 
 ];
