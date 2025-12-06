@@ -564,8 +564,7 @@ class FeedbackSummaryController extends Controller
         // Delete summary
         $event->update([
             'feedback_summary' => null,
-            'feedback_summary_generated_at' => null,
-            'feedback_count_at_summary' => null
+            'feedback_summary_generated_at' => null
         ]);
 
         return response()->json([

@@ -367,60 +367,7 @@
             </div>
         </div>
 
-        <!-- Feedback Endpoints -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Feedback & Certificates</h2>
-            
-            <!-- Submit Feedback -->
-            <div class="border-l-4 border-blue-500 pl-4 mb-6">
-                <div class="flex items-center mb-2">
-                    <span class="method-post">POST</span>
-                    <span class="ml-3 font-mono text-lg">/feedbacks/{event_id}</span>
-                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
-                </div>
-                <p class="text-gray-600 mb-3">Submit feedback for an event (required for certificate)</p>
-                
-                <h4 class="font-semibold mb-2">Request Body:</h4>
-                <div class="code-block">
-<pre><code class="language-json">{
-    "rating": 5,
-    "comment": "Great event! Very informative and well organized."
-}</code></pre>
-                </div>
-            </div>
-
-            <!-- Download Certificate -->
-            <div class="border-l-4 border-green-500 pl-4 mb-6">
-                <div class="flex items-center mb-2">
-                    <span class="method-get">GET</span>
-                    <span class="ml-3 font-mono text-lg">/feedbacks/certificate/{event_id}/download</span>
-                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
-                </div>
-                <p class="text-gray-600 mb-3">Download event certificate (PDF)</p>
-            </div>
-
-            <!-- Get Certificate URL -->
-            <div class="border-l-4 border-green-500 pl-4 mb-6">
-                <div class="flex items-center mb-2">
-                    <span class="method-get">GET</span>
-                    <span class="ml-3 font-mono text-lg">/feedbacks/certificate/{event_id}/url</span>
-                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
-                </div>
-                <p class="text-gray-600 mb-3">Get certificate download URL</p>
-            </div>
-
-            <!-- My Feedbacks -->
-            <div class="border-l-4 border-green-500 pl-4 mb-6">
-                <div class="flex items-center mb-2">
-                    <span class="method-get">GET</span>
-                    <span class="ml-3 font-mono text-lg">/feedbacks/my-feedbacks</span>
-                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
-                </div>
-                <p class="text-gray-600 mb-3">Get user's feedbacks</p>
-            </div>
-        </div>
-
-<!-- Feedback Summary Endpoints (NEW) -->
+         <!-- Feedback Summary Endpoints (NEW) -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 class="text-2xl font-bold mb-6 text-gray-800">Feedback Summary (AI-Generated)</h2>
             <p class="text-gray-600 mb-4">AI-powered feedback analysis and summary generation for event organizers</p>
@@ -718,7 +665,7 @@
             <div class="border-l-4 border-blue-500 pl-4 mb-6">
                 <div class="flex items-center mb-2">
                     <span class="method-post">POST</span>
-                    <span class="ml-3 font-mono text-lg">/notifications/send-event-reminder</span>
+                    <span class="ml-3 font-mono text-lg">/notifications/send-reminder</span>
                     <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
                 </div>
                 <p class="text-gray-600 mb-3">Send email reminder to event participants manually (for testing or admin trigger)</p>
@@ -731,11 +678,34 @@
 }</code></pre>
                 </div>
 
-                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <h4 class="font-semibold mb-2">Response (200) - All participants:</h4>
                 <div class="code-block">
 <pre><code class="language-json">{
     "success": true,
     "message": "Event reminders sent successfully to 10 participant(s)"
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response (200) - Specific user:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Event reminder sent successfully to john@example.com"
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Error Responses:</h4>
+                <div class="code-block">
+<pre><code class="language-json">// 404 - No participants found
+{
+    "success": false,
+    "message": "No participants found for this event"
+}
+
+// 500 - Failed to send
+{
+    "success": false,
+    "message": "Failed to send event reminder: {error_message}"
 }</code></pre>
                 </div>
             </div>
@@ -1491,6 +1461,188 @@
                 "created_at": "2025-10-29T16:25:39.000000Z"
             }
         ]
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard API -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Admin Dashboard API</h2>
+            <p class="text-gray-600 mb-4">API untuk organizer (role <code>admin</code>) untuk melihat ringkasan aktivitas dan kinerja event mereka</p>
+
+            <!-- Get Dashboard Overview -->
+            <div class="border-l-4 border-purple-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/admin/dashboard</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get organizer dashboard overview: stats, recent activities, monthly events, top events, and category breakdown</p>
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "stats": {
+            "total_users": 120,
+            "total_events": 8,
+            "total_categories": 5,
+            "total_participants": 340,
+            "active_events": 3,
+            "completed_events": 5,
+            "this_month_events": 2,
+            "this_month_participants": 45
+        },
+        "recent_activities": [
+            {
+                "type": "user_joined",
+                "message": "User John Doe joined 'Tech Conference 2025'",
+                "time": "2025-10-29T17:05:28.000000Z",
+                "icon": "user-plus",
+                "color": "green"
+            }
+        ],
+        "monthly_events": {
+            "months": ["Jan 2025", "Feb 2025", ..., "Oct 2025"],
+            "events": [1, 0, 2, 1, 0, 1, 2, 0, 1, 0, 0, 2]
+        },
+        "category_stats": [
+            {
+                "id": 1,
+                "name": "Technology",
+                "count": 5,
+                "color": "#3B82F6"
+            }
+        ],
+        "top_events": [
+            {
+                "id": 9,
+                "title": "Digital Art Exhibition",
+                "participants_count": 25,
+                "organizer": {
+                    "id": 3,
+                    "full_name": "Sarah Johnson"
+                },
+                "category": {
+                    "id": 5,
+                    "name": "Arts & Culture",
+                    "color": "#8B5CF6"
+                }
+            }
+        ]
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics API -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Analytics API</h2>
+            <p class="text-gray-600 mb-4">API untuk organizer (role <code>admin</code>) untuk melihat analitik kinerja event mereka dalam rentang waktu tertentu</p>
+
+            <!-- Get Analytics Overview -->
+            <div class="border-l-4 border-indigo-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/analytics</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get detailed analytics: key metrics, monthly/event/user/revenue trends, category & top events</p>
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">?date_range=30  // Days (default: 30)</code></pre>
+                </div>
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "stats": {
+            "total_revenue": 500000,
+            "avg_rating": 4.5,
+            "conversion_rate": 87.5,
+            "active_users": 120,
+            "new_users": 30,
+            "total_participants": 340,
+            "total_feedbacks": 20
+        },
+        "monthlyTrends": [
+            {
+                "month": "Jan 2025",
+                "events": 2
+            }
+        ],
+        "categoryAnalytics": [
+            {
+                "name": "Technology",
+                "events_count": 4,
+                "color": "#3B82F6"
+            }
+        ],
+        "userAnalytics": {
+            "user_trends": [
+                {"date": "2025-10-29", "count": 15}
+            ]
+        },
+        "eventAnalytics": {
+            "event_trends": [
+                {"date": "2025-10-28", "count": 1}
+            ]
+        },
+        "revenueAnalytics": {
+            "revenue_trends": [
+                {"date": "2025-10-29", "revenue": 50000}
+            ]
+        },
+        "topEvents": [
+            {
+                "title": "Digital Art Exhibition",
+                "participants_count": 25,
+                "price": 50000,
+                "category": {
+                    "name": "Arts & Culture",
+                    "color": "#8B5CF6"
+                }
+            }
+        ],
+        "date_range": {
+            "days": 30,
+            "start_date": "2025-10-07",
+            "end_date": "2025-11-06"
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Export Analytics -->
+            <div class="border-l-4 border-indigo-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/analytics/export</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Export analytics data as PDF (only PDF supported)</p>
+                <h4 class="font-semibold mb-2">Request Body (optional):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "date_range": 30
+}</code></pre>
+                </div>
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "PDF exported successfully",
+    "data": {
+        "url": "http://localhost:8000/storage/exports/analytics_export_2025-12-06_143022.pdf",
+        "filename": "analytics_export_2025-12-06_143022.pdf"
     }
 }</code></pre>
                 </div>
