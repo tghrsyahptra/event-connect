@@ -1,0 +1,1980 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Event Management API Documentation",
+        "description": "Dokumentasi lengkap API untuk sistem manajemen event. Mencakup fitur feedback, notifikasi, dan sertifikat.",
+        "contact": {
+            "name": "API Support Team",
+            "email": "support@eventmanagement.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Development Server"
+        },
+        {
+            "url": "https://staging-api.eventmanagement.com",
+            "description": "Staging Server"
+        },
+        {
+            "url": "https://api.eventmanagement.com",
+            "description": "Production Server"
+        }
+    ],
+    "paths": {
+        "/api/feedbacks/{event}": {
+            "post": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Submit feedback untuk event",
+                "description": "User yang sudah attend event dapat memberikan feedback dan mendapatkan sertifikat",
+                "operationId": "88e799dce7bf02ea671b32cf6bd8b56d",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rating",
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "rating": {
+                                        "description": "Rating 1-5",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "maxLength": 1000,
+                                        "example": "Event sangat bermanfaat dan terorganisir dengan baik"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Feedback berhasil disubmit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Feedback submitted successfully. Certificate generated."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "event_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "rating": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "comment": {
+                                                    "type": "string",
+                                                    "example": "Event sangat bermanfaat"
+                                                },
+                                                "certificate_generated": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "certificate_path": {
+                                                    "type": "string",
+                                                    "example": "certificates/certificate_1_1_1234567890.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "User belum attend event atau event belum selesai"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedbacks/my-feedbacks": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get daftar feedback user",
+                "description": "Mendapatkan semua feedback yang pernah diberikan user",
+                "operationId": "e347a09a4c188faef7342c227dc0f238",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar feedback berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "comment": {
+                                                                "type": "string",
+                                                                "example": "Event sangat bagus"
+                                                            },
+                                                            "certificate_generated": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "event": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Tech Conference 2024"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedbacks/event/{event}": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get feedback untuk event tertentu (Organizer only)",
+                "description": "Organizer dapat melihat semua feedback untuk event mereka",
+                "operationId": "109ecb69cd3b1bc7858478ba8eca14dd",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar feedback event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "comment": {
+                                                                "type": "string",
+                                                                "example": "Event sangat bagus"
+                                                            },
+                                                            "user": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "John Doe"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized - Bukan organizer event"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedbacks/certificate/{event}/download": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Download sertifikat event",
+                "description": "Download file PDF sertifikat",
+                "operationId": "9384ad1cf9f43a502e641a951203797d",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "File PDF sertifikat",
+                        "content": {
+                            "application/pdf": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Certificate belum di-generate"
+                    },
+                    "404": {
+                        "description": "Feedback atau file tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/feedbacks/certificate/{event}/url": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get URL sertifikat event",
+                "description": "Mendapatkan public URL untuk mengakses sertifikat",
+                "operationId": "3f1da0e1289dc26afdbade6e63365cd4",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "URL sertifikat berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "certificate_url": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/certificates/certificate_1_1_1234567890.pdf"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Certificate belum di-generate"
+                    },
+                    "404": {
+                        "description": "Feedback tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{event}/feedback/generate-summary": {
+            "post": {
+                "tags": [
+                    "Feedback Summary"
+                ],
+                "summary": "Generate AI summary untuk feedback event",
+                "description": "Generate ringkasan feedback menggunakan AI. Hanya dapat dilakukan oleh Event Organizer setelah event selesai dan belum pernah generate summary sebelumnya. Minimal 1 feedback diperlukan.",
+                "operationId": "61808984194d262091c54f2ef3856be9",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Summary berhasil di-generate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Feedback summary generated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "summary": {
+                                                    "type": "string",
+                                                    "example": "Overall, participants enjoyed the event. The venue was praised for its accessibility and comfort..."
+                                                },
+                                                "generated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-12-06T10:30:00.000000Z"
+                                                },
+                                                "feedback_count": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "average_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Event belum selesai, summary sudah ada, atau feedback tidak mencukupi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cannot generate summary. Event has not ended yet."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Bukan organizer event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Only event organizer can generate summary."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    },
+                    "500": {
+                        "description": "Server Error - Gagal generate summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to generate summary. Please try again later."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{event}/feedback/summary": {
+            "get": {
+                "tags": [
+                    "Feedback Summary"
+                ],
+                "summary": "Get feedback summary untuk event",
+                "description": "Mendapatkan AI-generated summary beserta statistik feedback event. Hanya dapat diakses oleh Event Organizer.",
+                "operationId": "bd3771e723ce2753405335febe78b352",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Summary berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "summary": {
+                                                    "type": "string",
+                                                    "example": "Overall, participants enjoyed the event. The venue was praised for its accessibility and comfort..."
+                                                },
+                                                "generated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-12-06T10:30:00.000000Z"
+                                                },
+                                                "feedback_count": {
+                                                    "description": "Jumlah feedback saat summary di-generate",
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "current_feedback_count": {
+                                                    "description": "Jumlah feedback saat ini",
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "average_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.5
+                                                },
+                                                "rating_distribution": {
+                                                    "properties": {
+                                                        "5_star": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "4_star": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "3_star": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "2_star": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "1_star": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Bukan organizer event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Only event organizer can view summary."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Summary tidak ditemukan atau event tidak ada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No summary available. Generate summary first."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Feedback Summary"
+                ],
+                "summary": "Update/regenerate feedback summary",
+                "description": "Regenerate AI summary dengan feedback terbaru. Hanya dapat dilakukan oleh Event Organizer. Summary yang lama akan diganti dengan yang baru.",
+                "operationId": "8b7e0c903dedd73ad818c1fc854c2b68",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Summary berhasil di-update",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Feedback summary updated successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "summary": {
+                                                    "type": "string",
+                                                    "example": "Overall, participants enjoyed the event. The venue was praised for its accessibility and comfort..."
+                                                },
+                                                "generated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-12-06T10:30:00.000000Z"
+                                                },
+                                                "feedback_count": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "average_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.5
+                                                },
+                                                "previous_feedback_count": {
+                                                    "description": "Jumlah feedback pada summary sebelumnya",
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Feedback tidak mencukupi atau belum ada summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No existing summary to update. Please generate summary first."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Bukan organizer event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Only event organizer can update summary."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    },
+                    "500": {
+                        "description": "Server Error - Gagal update summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to update summary. Please try again later."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Feedback Summary"
+                ],
+                "summary": "Hapus feedback summary",
+                "description": "Menghapus AI-generated summary dari event. Hanya dapat dilakukan oleh Event Organizer. Summary dapat di-generate ulang setelah dihapus.",
+                "operationId": "af51c2a1554a63602c145f68f15cfff4",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Summary berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Feedback summary deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Tidak ada summary untuk dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No summary to delete."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Bukan organizer event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Only event organizer can delete summary."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{event}/feedback/summary/detailed": {
+            "get": {
+                "tags": [
+                    "Feedback Summary"
+                ],
+                "summary": "Get detailed feedback summary dengan semua feedback",
+                "description": "Mendapatkan AI-generated summary, statistik lengkap, dan daftar semua feedback event. Hanya dapat diakses oleh Event Organizer.",
+                "operationId": "af34bdc3b77b6dd3ce3a15824c491079",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "in": "path",
+                        "description": "ID Event",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detailed summary berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "summary": {
+                                                    "type": "string",
+                                                    "example": "Overall, participants enjoyed the event. The venue was praised for its accessibility and comfort..."
+                                                },
+                                                "generated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-12-06T10:30:00.000000Z"
+                                                },
+                                                "statistics": {
+                                                    "properties": {
+                                                        "total_feedbacks": {
+                                                            "type": "integer",
+                                                            "example": 20
+                                                        },
+                                                        "feedback_count_at_summary": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "average_rating": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 4.5
+                                                        },
+                                                        "rating_distribution": {
+                                                            "properties": {
+                                                                "5_star": {
+                                                                    "type": "integer",
+                                                                    "example": 10
+                                                                },
+                                                                "4_star": {
+                                                                    "type": "integer",
+                                                                    "example": 5
+                                                                },
+                                                                "3_star": {
+                                                                    "type": "integer",
+                                                                    "example": 3
+                                                                },
+                                                                "2_star": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "1_star": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "feedbacks": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "comment": {
+                                                                "type": "string",
+                                                                "example": "Great event! Very informative and well organized."
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "user": {
+                                                                "properties": {
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "John Doe"
+                                                                    },
+                                                                    "email": {
+                                                                        "type": "string",
+                                                                        "example": "john@example.com"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Bukan organizer event",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized. Only event organizer can view summary."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get daftar notifikasi user",
+                "description": "Mendapatkan semua notifikasi user dengan pagination",
+                "operationId": "6d56a555955089a73fdf3f7229e8ead8",
+                "parameters": [
+                    {
+                        "name": "unread_only",
+                        "in": "query",
+                        "description": "Filter hanya notifikasi yang belum dibaca",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar notifikasi berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "event_reminder"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Event Reminder"
+                                                            },
+                                                            "message": {
+                                                                "type": "string",
+                                                                "example": "Reminder: Tech Conference 2024 on 15 Dec 2024"
+                                                            },
+                                                            "is_read": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            },
+                                                            "event": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Tech Conference 2024"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/{notification}/read": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Mark notifikasi sebagai sudah dibaca",
+                "description": "Menandai satu notifikasi sebagai sudah dibaca",
+                "operationId": "48b6313771a23153c994fa259177e8ce",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "ID Notification",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notifikasi berhasil ditandai sebagai sudah dibaca",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized - Bukan notifikasi user"
+                    },
+                    "404": {
+                        "description": "Notifikasi tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/mark-all-read": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Mark semua notifikasi sebagai sudah dibaca",
+                "description": "Menandai semua notifikasi user sebagai sudah dibaca",
+                "operationId": "2c05d18629d588cb3c35be1ae1577214",
+                "responses": {
+                    "200": {
+                        "description": "Semua notifikasi berhasil ditandai sebagai sudah dibaca",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All notifications marked as read"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/unread-count": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get jumlah notifikasi yang belum dibaca",
+                "description": "Mendapatkan total notifikasi yang belum dibaca oleh user",
+                "operationId": "f3e05b69d516049be949f02a45e0eedd",
+                "responses": {
+                    "200": {
+                        "description": "Jumlah notifikasi unread berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "unread_count": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/{notification}": {
+            "delete": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Hapus notifikasi",
+                "description": "Menghapus satu notifikasi",
+                "operationId": "1679d8e573af604ef47333a1cc37e8ee",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "ID Notification",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notifikasi berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized - Bukan notifikasi user"
+                    },
+                    "404": {
+                        "description": "Notifikasi tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/send-event-reminder": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Kirim email reminder event (Manual/Testing)",
+                "description": "Mengirim email reminder ke participant event secara manual. Untuk testing atau admin trigger",
+                "operationId": "b45126af240869e2960d063e6f1b932e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "event_id"
+                                ],
+                                "properties": {
+                                    "event_id": {
+                                        "description": "ID Event",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email reminder berhasil dikirim",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Event reminders sent successfully to 10 participant(s)"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event atau participant tidak ditemukan"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Server error saat mengirim email"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/upcoming-reminders": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get upcoming events yang butuh reminder",
+                "description": "Mendapatkan daftar event yang akan datang dalam 7 hari ke depan",
+                "operationId": "ad8afabfeab6cab0528a3d590fbdd7d9",
+                "responses": {
+                    "200": {
+                        "description": "Daftar upcoming events berhasil didapatkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "event_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "event_title": {
+                                                        "type": "string",
+                                                        "example": "Tech Conference 2024"
+                                                    },
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "end_date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "days_until_event": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "Jakarta Convention Center"
+                                                    },
+                                                    "event_type": {
+                                                        "type": "string",
+                                                        "example": "online"
+                                                    },
+                                                    "contact_info": {
+                                                        "type": "string",
+                                                        "example": "info@techconf.com"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/": {
+            "get": {
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "API Health Check",
+                "description": "Endpoint untuk mengecek status API",
+                "operationId": "ab495a04e5278bfbdfbc8d777f9f6f2f",
+                "responses": {
+                    "200": {
+                        "description": "API is running",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "API is running"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "example": "1.0.0"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SuccessResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Operation successful"
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Validation errors"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "rating": [
+                                "The rating field is required."
+                            ],
+                            "comment": [
+                                "The comment must not exceed 1000 characters."
+                            ]
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UnauthorizedError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Unauthenticated"
+                    }
+                },
+                "type": "object"
+            },
+            "ForbiddenError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Unauthorized to access this resource"
+                    }
+                },
+                "type": "object"
+            },
+            "NotFoundError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Resource not found"
+                    }
+                },
+                "type": "object"
+            },
+            "BadRequestError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Bad request"
+                    }
+                },
+                "type": "object"
+            },
+            "ServerError": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Internal server error"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 20
+                    }
+                },
+                "type": "object"
+            },
+            "Event": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Tech Conference 2024"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Annual technology conference"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-15 09:00:00"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-15 17:00:00"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "Jakarta Convention Center"
+                    },
+                    "event_type": {
+                        "type": "string",
+                        "enum": [
+                            "online",
+                            "offline",
+                            "hybrid"
+                        ],
+                        "example": "offline"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "published",
+                            "cancelled"
+                        ],
+                        "example": "published"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    }
+                },
+                "type": "object"
+            },
+            "Feedback": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "event_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1,
+                        "example": 5
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Event sangat bermanfaat dan terorganisir dengan baik"
+                    },
+                    "certificate_generated": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "certificate_path": {
+                        "type": "string",
+                        "example": "certificates/certificate_1_1_1234567890.pdf"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Notification": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "event_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "event_reminder"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Event Reminder"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Reminder: Tech Conference 2024 on 15 Dec 2024"
+                    },
+                    "is_read": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "data": {
+                        "properties": {
+                            "event_title": {
+                                "type": "string",
+                                "example": "Tech Conference 2024"
+                            },
+                            "start_date": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "location": {
+                                "type": "string",
+                                "example": "Jakarta Convention Center"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Masukkan JWT token dengan format: Bearer {token}"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Feedback",
+            "description": "API Endpoints untuk manajemen feedback event"
+        },
+        {
+            "name": "Feedback Summary",
+            "description": "API Endpoints untuk generate dan melihat AI summary dari feedback event"
+        },
+        {
+            "name": "Notification",
+            "description": "API Endpoints untuk manajemen notifikasi"
+        },
+        {
+            "name": "Health Check",
+            "description": "Health Check"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ]
+}
