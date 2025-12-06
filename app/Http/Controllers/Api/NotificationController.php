@@ -12,10 +12,63 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
+/**
+ * @OA\Tag(
+ *     name="Notification",
+ *     description="API Endpoints untuk manajemen notifikasi"
+ * )
+ */
 class NotificationController extends Controller
 {
     /**
-     * Get user's notifications
+     * @OA\Get(
+     *     path="/api/notifications",
+     *     tags={"Notification"},
+     *     summary="Get daftar notifikasi user",
+     *     description="Mendapatkan semua notifikasi user dengan pagination",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="unread_only",
+     *         in="query",
+     *         description="Filter hanya notifikasi yang belum dibaca",
+     *         required=false,
+     *         @OA\Schema(type="boolean", default=false)
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Nomor halaman",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Daftar notifikasi berhasil didapatkan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="type", type="string", example="event_reminder"),
+     *                         @OA\Property(property="title", type="string", example="Event Reminder"),
+     *                         @OA\Property(property="message", type="string", example="Reminder: Tech Conference 2024 on 15 Dec 2024"),
+     *                         @OA\Property(property="is_read", type="boolean", example=false),
+     *                         @OA\Property(property="created_at", type="string", format="date-time"),
+     *                         @OA\Property(property="event", type="object",
+     *                             @OA\Property(property="id", type="integer", example=1),
+     *                             @OA\Property(property="title", type="string", example="Tech Conference 2024")
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="per_page", type="integer", example=20),
+     *                 @OA\Property(property="total", type="integer", example=100)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function index(Request $request): JsonResponse
     {
@@ -37,7 +90,31 @@ class NotificationController extends Controller
     }
 
     /**
-     * Mark notification as read
+     * @OA\Post(
+     *     path="/api/notifications/{notification}/read",
+     *     tags={"Notification"},
+     *     summary="Mark notifikasi sebagai sudah dibaca",
+     *     description="Menandai satu notifikasi sebagai sudah dibaca",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="notification",
+     *         in="path",
+     *         description="ID Notification",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notifikasi berhasil ditandai sebagai sudah dibaca",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Notification marked as read")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Unauthorized - Bukan notifikasi user"),
+     *     @OA\Response(response=404, description="Notifikasi tidak ditemukan"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function markAsRead(Request $request, Notification $notification): JsonResponse
     {
@@ -59,7 +136,22 @@ class NotificationController extends Controller
     }
 
     /**
-     * Mark all notifications as read
+     * @OA\Post(
+     *     path="/api/notifications/mark-all-read",
+     *     tags={"Notification"},
+     *     summary="Mark semua notifikasi sebagai sudah dibaca",
+     *     description="Menandai semua notifikasi user sebagai sudah dibaca",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Semua notifikasi berhasil ditandai sebagai sudah dibaca",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="All notifications marked as read")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function markAllAsRead(Request $request): JsonResponse
     {
@@ -76,7 +168,24 @@ class NotificationController extends Controller
     }
 
     /**
-     * Get unread notification count
+     * @OA\Get(
+     *     path="/api/notifications/unread-count",
+     *     tags={"Notification"},
+     *     summary="Get jumlah notifikasi yang belum dibaca",
+     *     description="Mendapatkan total notifikasi yang belum dibaca oleh user",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Jumlah notifikasi unread berhasil didapatkan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="unread_count", type="integer", example=5)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function unreadCount(Request $request): JsonResponse
     {
@@ -95,7 +204,31 @@ class NotificationController extends Controller
     }
 
     /**
-     * Delete notification
+     * @OA\Delete(
+     *     path="/api/notifications/{notification}",
+     *     tags={"Notification"},
+     *     summary="Hapus notifikasi",
+     *     description="Menghapus satu notifikasi",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="notification",
+     *         in="path",
+     *         description="ID Notification",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notifikasi berhasil dihapus",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Notification deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Unauthorized - Bukan notifikasi user"),
+     *     @OA\Response(response=404, description="Notifikasi tidak ditemukan"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function destroy(Notification $notification): JsonResponse
     {
@@ -117,19 +250,44 @@ class NotificationController extends Controller
     }
 
     /**
-     * Send event reminder email manually (for testing or admin trigger)
+     * @OA\Post(
+     *     path="/api/notifications/send-event-reminder",
+     *     tags={"Notification"},
+     *     summary="Kirim email reminder event (Manual/Testing)",
+     *     description="Mengirim email reminder ke participant event secara manual. Untuk testing atau admin trigger",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"event_id"},
+     *             @OA\Property(property="event_id", type="integer", example=1, description="ID Event"),
+     *
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Email reminder berhasil dikirim",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Event reminders sent successfully to 10 participant(s)")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Event atau participant tidak ditemukan"),
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=500, description="Server error saat mengirim email"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function sendEventReminder(Request $request): JsonResponse
     {
         $request->validate([
             'event_id' => 'required|exists:events,id',
-            'user_id' => 'sometimes|exists:users,id', // Optional, if not provided, send to all participants
+            'user_id' => 'sometimes|exists:users,id',
         ]);
 
         try {
             $event = Event::findOrFail($request->event_id);
 
-            // If specific user_id provided, send only to that user
             if ($request->has('user_id')) {
                 $participant = EventParticipant::where('event_id', $event->id)
                     ->where('user_id', $request->user_id)
@@ -140,7 +298,6 @@ class NotificationController extends Controller
                 Mail::to($participant->user->email)
                     ->send(new EventReminderMail($event, $participant->user));
 
-                // Create notification
                 Notification::create([
                     'user_id' => $participant->user_id,
                     'event_id' => $event->id,
@@ -164,7 +321,6 @@ class NotificationController extends Controller
                 ]);
             }
 
-            // Send to all participants
             $participants = EventParticipant::where('event_id', $event->id)
                 ->whereIn('status', ['registered'])
                 ->with('user')
@@ -182,7 +338,6 @@ class NotificationController extends Controller
                 Mail::to($participant->user->email)
                     ->send(new EventReminderMail($event, $participant->user));
 
-                // Create notification
                 Notification::create([
                     'user_id' => $participant->user_id,
                     'event_id' => $event->id,
@@ -217,13 +372,38 @@ class NotificationController extends Controller
     }
 
     /**
-     * Get upcoming events that need reminders
+     * @OA\Get(
+     *     path="/api/notifications/upcoming-reminders",
+     *     tags={"Notification"},
+     *     summary="Get upcoming events yang butuh reminder",
+     *     description="Mendapatkan daftar event yang akan datang dalam 7 hari ke depan",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Daftar upcoming events berhasil didapatkan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="event_id", type="integer", example=1),
+     *                     @OA\Property(property="event_title", type="string", example="Tech Conference 2024"),
+     *                     @OA\Property(property="start_date", type="string", format="date-time"),
+     *                     @OA\Property(property="end_date", type="string", format="date-time"),
+     *                     @OA\Property(property="days_until_event", type="integer", example=3),
+     *                     @OA\Property(property="location", type="string", example="Jakarta Convention Center"),
+     *                     @OA\Property(property="event_type", type="string", example="online"),
+     *                     @OA\Property(property="contact_info", type="string", example="info@techconf.com")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
      */
     public function getUpcomingReminders(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        // Get user's upcoming events (within next 7 days)
         $upcomingEvents = EventParticipant::where('user_id', $user->id)
             ->whereIn('status', ['registered'])
             ->whereHas('event', function($query) {

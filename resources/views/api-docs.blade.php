@@ -420,6 +420,181 @@
             </div>
         </div>
 
+<!-- Feedback Summary Endpoints (NEW) -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Feedback Summary (AI-Generated)</h2>
+            <p class="text-gray-600 mb-4">AI-powered feedback analysis and summary generation for event organizers</p>
+            
+            <!-- Generate Summary -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/events/{event_id}/feedback/generate-summary</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Generate AI summary for feedback event. Event must be ended, minimum 1 feedback required, and summary hasn't been generated before.</p>
+                
+                <h4 class="font-semibold mb-2">Response (201):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Feedback summary generated successfully",
+    "data": {
+        "summary": "Overall, participants enjoyed the event. The venue was praised for its accessibility and comfort...",
+        "generated_at": "2024-12-06T10:30:00.000000Z",
+        "feedback_count": 15,
+        "average_rating": 4.5
+    }
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Error Responses:</h4>
+                <div class="code-block">
+<pre><code class="language-json">// 400 - Event not ended yet
+{
+    "success": false,
+    "message": "Cannot generate summary. Event has not ended yet."
+}
+
+// 400 - Summary already exists
+{
+    "success": false,
+    "message": "Summary already generated for this event. Each event can only have one summary."
+}
+
+// 400 - Not enough feedback
+{
+    "success": false,
+    "message": "Need at least 1 feedbacks to generate summary. Current: 0"
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Summary -->
+            <div class="border-l-4 border-green-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/events/{event_id}/feedback/summary</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get AI-generated summary with statistics</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "summary": "Overall, participants enjoyed the event...",
+        "generated_at": "2024-12-06T10:30:00.000000Z",
+        "feedback_count": 15,
+        "current_feedback_count": 20,
+        "average_rating": 4.5,
+        "rating_distribution": {
+            "5_star": 10,
+            "4_star": 5,
+            "3_star": 3,
+            "2_star": 1,
+            "1_star": 1
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Detailed Summary -->
+            <div class="border-l-4 border-green-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/events/{event_id}/feedback/summary/detailed</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get detailed summary with all feedbacks and complete statistics</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "summary": "Overall, participants enjoyed the event...",
+        "generated_at": "2024-12-06T10:30:00.000000Z",
+        "statistics": {
+            "total_feedbacks": 20,
+            "feedback_count_at_summary": 15,
+            "average_rating": 4.5,
+            "rating_distribution": {
+                "5_star": 10,
+                "4_star": 5,
+                "3_star": 3,
+                "2_star": 1,
+                "1_star": 1
+            }
+        },
+        "feedbacks": [
+            {
+                "id": 1,
+                "rating": 5,
+                "comment": "Great event! Very informative and well organized.",
+                "created_at": "2024-12-06T10:30:00.000000Z",
+                "user": {
+                    "name": "John Doe",
+                    "email": "john@example.com"
+                }
+            }
+        ]
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Update Summary -->
+            <div class="border-l-4 border-yellow-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-put">PUT</span>
+                    <span class="ml-3 font-mono text-lg">/events/{event_id}/feedback/summary</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Regenerate AI summary with latest feedbacks. Previous summary will be replaced.</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Feedback summary updated successfully",
+    "data": {
+        "summary": "Updated summary based on all feedbacks...",
+        "generated_at": "2024-12-06T11:00:00.000000Z",
+        "feedback_count": 20,
+        "average_rating": 4.6,
+        "previous_feedback_count": 15
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Delete Summary -->
+            <div class="border-l-4 border-red-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-delete">DELETE</span>
+                    <span class="ml-3 font-mono text-lg">/events/{event_id}/feedback/summary</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                    <span class="ml-2 bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Organizer Only</span>
+                </div>
+                <p class="text-gray-600 mb-3">Delete AI-generated summary. Can be regenerated after deletion.</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Feedback summary deleted successfully"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
         <!-- Notification Endpoints -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 class="text-2xl font-bold mb-6 text-gray-800">Notifications</h2>
@@ -431,7 +606,38 @@
                     <span class="ml-3 font-mono text-lg">/notifications</span>
                     <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
                 </div>
-                <p class="text-gray-600 mb-3">Get user notifications</p>
+                <p class="text-gray-600 mb-3">Get user notifications with pagination</p>
+                
+                <h4 class="font-semibold mb-2">Query Parameters:</h4>
+                <div class="code-block">
+<pre><code class="language-json">?unread_only=true&page=1</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 1,
+                "type": "event_reminder",
+                "title": "Event Reminder",
+                "message": "Reminder: Tech Conference 2024 on 15 Dec 2024",
+                "is_read": false,
+                "created_at": "2024-12-06T10:30:00.000000Z",
+                "event": {
+                    "id": 1,
+                    "title": "Tech Conference 2024"
+                }
+            }
+        ],
+        "per_page": 20,
+        "total": 100
+    }
+}</code></pre>
+                </div>
             </div>
 
             <!-- Mark as Read -->
@@ -442,6 +648,14 @@
                     <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
                 </div>
                 <p class="text-gray-600 mb-3">Mark notification as read</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Notification marked as read"
+}</code></pre>
+                </div>
             </div>
 
             <!-- Mark All as Read -->
@@ -452,6 +666,14 @@
                     <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
                 </div>
                 <p class="text-gray-600 mb-3">Mark all notifications as read</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "All notifications marked as read"
+}</code></pre>
+                </div>
             </div>
 
             <!-- Unread Count -->
@@ -462,6 +684,89 @@
                     <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
                 </div>
                 <p class="text-gray-600 mb-3">Get unread notifications count</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": {
+        "unread_count": 5
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Delete Notification -->
+            <div class="border-l-4 border-red-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-delete">DELETE</span>
+                    <span class="ml-3 font-mono text-lg">/notifications/{id}</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                </div>
+                <p class="text-gray-600 mb-3">Delete a notification</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Notification deleted successfully"
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Send Event Reminder (Manual) -->
+            <div class="border-l-4 border-blue-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-post">POST</span>
+                    <span class="ml-3 font-mono text-lg">/notifications/send-event-reminder</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                </div>
+                <p class="text-gray-600 mb-3">Send email reminder to event participants manually (for testing or admin trigger)</p>
+                
+                <h4 class="font-semibold mb-2">Request Body:</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "event_id": 1,
+    "user_id": 24  // Optional: send to specific user only
+}</code></pre>
+                </div>
+
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "message": "Event reminders sent successfully to 10 participant(s)"
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get Upcoming Reminders -->
+            <div class="border-l-4 border-green-500 pl-4 mb-6">
+                <div class="flex items-center mb-2">
+                    <span class="method-get">GET</span>
+                    <span class="ml-3 font-mono text-lg">/notifications/upcoming-reminders</span>
+                    <span class="ml-2 bg-red-100 text-red-800 px-2 py-1 rounded text-xs">Auth Required</span>
+                </div>
+                <p class="text-gray-600 mb-3">Get upcoming events in next 7 days that need reminder</p>
+                
+                <h4 class="font-semibold mb-2">Response (200):</h4>
+                <div class="code-block">
+<pre><code class="language-json">{
+    "success": true,
+    "data": [
+        {
+            "event_id": 1,
+            "event_title": "Tech Conference 2024",
+            "start_date": "2024-12-15T09:00:00.000000Z",
+            "end_date": "2024-12-15T17:00:00.000000Z",
+            "days_until_event": 3,
+            "location": "Jakarta Convention Center",
+            "event_type": "online",
+            "contact_info": "info@techconf.com"
+        }
+    ]
+}</code></pre>
+                </div>
             </div>
         </div>
 

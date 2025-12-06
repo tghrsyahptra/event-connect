@@ -158,11 +158,13 @@ Route::prefix('notifications')->group(function () {
     Route::get('upcoming-reminders', [NotificationController::class, 'getUpcomingReminders']);
 });
 
-    // Feedback Summary Routes (EO only)
-    Route::prefix('events/{event}')->group(function () {
-        Route::post('/feedback/generate-summary', [FeedbackSummaryController::class, 'generateSummary']);
-        Route::get('/feedback/summary', [FeedbackSummaryController::class, 'getSummary']);
-        Route::get('/feedback/summary/detailed', [FeedbackSummaryController::class, 'getDetailedSummary']);
+    // ==================== FEEDBACK SUMMARY ROUTES (EO only) ====================
+    Route::prefix('events/{event}/feedback')->group(function () {
+        Route::post('generate-summary', [FeedbackSummaryController::class, 'generateSummary']);
+        Route::get('summary', [FeedbackSummaryController::class, 'getSummary']);
+        Route::get('summary/detailed', [FeedbackSummaryController::class, 'getDetailedSummary']);
+        Route::put('summary', [FeedbackSummaryController::class, 'updateSummary']); // NEW: Update summary
+        Route::delete('summary', [FeedbackSummaryController::class, 'deleteSummary']); // NEW: Delete summary
     });
 
 });
